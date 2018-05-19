@@ -1,0 +1,3 @@
+[submodule "survey-abstracts"]
+	path = modules/survey-abstracts
+	url = git@github.com:dameter/survey-abstracts.git
