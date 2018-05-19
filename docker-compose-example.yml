@@ -1,0 +1,44 @@
+version: '3.4'
+services:
+  nginx:
+    image: evild/alpine-nginx:1.9.15-openssl
+    container_name: dameter_nginx
+    restart: always
+    volumes:
+      - ./:/var/www/html/:ro
+      - ./docker/nginx/conf/nginx.conf:/etc/nginx/conf/nginx.conf:ro
+      - ./docker/nginx/conf.d:/etc/nginx/conf.d:ro
+    ports:
+      - 8080:80
+    links:
+      - php
+    depends_on:
+      - db
+      - php
+
+  php:
+    build: docker/php
+    container_name: dameter_php
+    restart: always
+
+    volumes:
+      - ./docker/php/php.ini:/usr/local/etc/php/php.ini:ro
+      - ./:/var/www/html
+    depends_on:
+      - db
+
+  db:
+    image: mariadb:latest
+    container_name: dameter_db
+    restart: always
+    volumes:
+      - ./.mysql:/var/lib/mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=password
+volumes:
+  db-data:
+    driver: local
+networks:
+  default:
+    external:
+      name: dev1
